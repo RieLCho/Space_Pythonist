@@ -268,7 +268,7 @@ class GalagaGame():
         for i in range(20):
             x = random.randint(0,w)
             y = random.randint(0,h)
-            self.canvas.create_oval(x,y,x,y,width=0,fill="white")
+            # self.canvas.create_oval(x,y,x,y,width=0,fill="white")
         self.canvas.create_text(400,200,text="Space Pythonist", fill="red", font=mainBigMenuFont)
         self.canvas.create_text(400,370,text="- Press ENTER -", fill="white", font=mainSmallMenuFont)
 
@@ -288,10 +288,9 @@ class GalagaGame():
             accuracy = "No Bullet Fired"
         self.canvas.delete(ALL)
         self.canvas.create_rectangle(0, 0, 800, 600, fill="black")
-        for i in range(10):
-            x = random.randint(0,w)
-            y = random.randint(0,h)
-            self.canvas.create_oval(x,y,x,y,width=0,fill="white")
+        x = random.randint(0,w)
+        y = random.randint(0,h)
+        self.canvas.create_oval(x,y,x,y,width=0,fill="white")
         mainBigMenuFont = Font(family="Chiller", size=100, weight="bold")
         mainSmallMenuFont = Font(family="Chiller", size=25)
         self.canvas.create_text(400,200,text="Game Over", fill="red", font=mainBigMenuFont)
@@ -379,17 +378,17 @@ class GalagaGame():
             gameRound += 1 # 게임 라운드 변수에 1 더해줌 
             gameSpeed += 5
             self.initSprites() # 스프라이트 다시 저장 
-            self.master.after(gameSpeed, self.gameLoop)
+            self.master.after(gameSpeed+(gameRound-1)*5, self.gameLoop)
         if self.running:
-            self.master.after(gameSpeed, self.gameLoop)
+            self.master.after(gameSpeed+(gameRound-1)*5, self.gameLoop)
         elif self.running == False:
-            self.master.after(gameSpeed, self.gameOverLoop)
+            self.master.after(gameSpeed+(gameRound-1)*5, self.gameOverLoop)
 
 root = Tk()
 # 게임 프로그램의 제목과 아이콘 설정
 root.title("Space Pythonist")
 
-# root.iconbitmap("아이콘이름.ico")
+root.iconbitmap("res\\sp.ico")
 
 # def screenshot ():
 #     myScreenshot = pyautogui.screenshot()
