@@ -135,7 +135,7 @@ class AlienSprite(Sprite):
     def move(self):
         if (((self.dx < 0) and (self.x < 10)) or ((self.dx > 0) and (self.x > 760))) :
             self.dx = -self.dx
-            self.y += 50
+            self.y += 108
             if (self.y >= 600) :	
                 self.game.endGame()
         super().move()
@@ -190,12 +190,12 @@ class GalagaGame():
     def initSprites(self) :
         self.sprites.clear() # 새로운 라운드를 시작할때 클리어 
         global gameRound
-        self.starship = StarShipSprite(self, self.shipImage, 370, 550)
+        self.starship = StarShipSprite(self, self.shipImage, 370, 520)
         self.sprites.append(self.starship)
         for x in range(0, 1+(gameRound)):
-            purpleAlien = AlienSprite(self, self.purpleAlienImage, 100 + (x*50), (50)+3*36)
-            blueAlien = AlienSprite(self, self.blueAlienImage, 100 + (x * 50), (50)+2*36)
-            greenAlien = AlienSprite(self, self.greenAlienImage, 100 + (x*50), (50)+1*36)
+            purpleAlien = AlienSprite(self, self.purpleAlienImage, 600+(x*50), 3*36)
+            blueAlien = AlienSprite(self, self.blueAlienImage, 600+(x * 50), 2*36)
+            greenAlien = AlienSprite(self, self.greenAlienImage, 600+(x*50), 1*36)
             self.sprites.append(blueAlien)
             self.sprites.append(purpleAlien)
             self.sprites.append(greenAlien)
