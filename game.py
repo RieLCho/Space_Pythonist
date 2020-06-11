@@ -15,7 +15,9 @@ h = 600
 
 # 게임을 시작했는지 안했는지 알려주는 변수
 gameState = 0
+
 gameRound = 1
+
 gameScore = 0
 
 # 게임 진행 속도 (낮을수록 빠름)
