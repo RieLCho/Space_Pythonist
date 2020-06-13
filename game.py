@@ -3,10 +3,6 @@
 from tkinter import *
 from tkinter.font import Font
 import time
-import subprocess
-# pip3 install pyautogui
-# import pyautogui
-# from tkinter import filedialog
 import random
 
 # 창 크기
