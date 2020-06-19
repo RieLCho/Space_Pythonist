@@ -5,15 +5,15 @@ from tkinter.font import Font
 import time
 import random
 
-# 창 크기
+# 창 크기를 위한 상수로 쓰기위한 전역 변수
 w = 800 
 h = 600 
 
-# 게임을 시작했는지 안했는지 알려주는 변수
+# 게임을 시작했는지 안했는지 알려주는 전역 변수 - 엔터키를 눌러서 1이되면 게임 시작
 gameState = 0
-
+# 게임 Round 수를 위한 전역 변수
 gameRound = 1
-
+# 게임의 점수를 위한 전역 변수 
 gameScore = 0
 
 # 게임 진행 속도 (낮을수록 빠름)
@@ -186,10 +186,12 @@ class GalagaGame():
 
     # 게임에 필요한 스프라이트를 생성하는 메소드
     def initSprites(self) :
-        self.sprites.clear() # 새로운 라운드를 시작할때 클리어 
+        # 새로운 라운드를 시작할때 스프라이트 클리어 
+        self.sprites.clear() 
         global gameRound
         self.starship = StarShipSprite(self, self.shipImage, 370, 520)
         self.sprites.append(self.starship)
+        # 게임 라운드 수에 따라 적의 수가 달라짐
         for x in range(0, 1+(gameRound)):
             purpleAlien = AlienSprite(self, self.purpleAlienImage, 600+(x*50), 3*36)
             blueAlien = AlienSprite(self, self.blueAlienImage, 600+(x * 50), 2*36)
@@ -197,11 +199,6 @@ class GalagaGame():
             self.sprites.append(blueAlien)
             self.sprites.append(purpleAlien)
             self.sprites.append(greenAlien)
-        
-    # 모든 적을 죽였을 때 새로운 라운드로 새로운 스프라이트 생성
-    def checkAllAlienDead(self):
-       if len(self.sprites) == 1:
-            self.initSprites(self)
 
     # 생성자 메소드
     def __init__(self, master):
@@ -213,7 +210,7 @@ class GalagaGame():
         self.canvas = Canvas(master, width=800, height=600)
         self.canvas.pack()
         self.canvas.focus_set()
-        # 파일 디렉토리에서 역 슬래쉬를 인식시키려면 \\처럼 두번 사용해야 함.
+        # res 폴더 안의 이미지 파일을 사용합니다
         self.shotImage = PhotoImage(file="res\\laser.png")
         self.shipImage = PhotoImage(file="res\\ship.png")
         self.blueAlienImage = PhotoImage(file="res\\enemy2_1.png")
@@ -227,7 +224,7 @@ class GalagaGame():
         master.bind("<space>", self.keySpace)
         self.initSprites()
 
-    # gameState 변수값 바꿔줌 
+    # 이 메소드를 호출하면 gameState를 바꿉니다
     def menuStartGame(self, sprite):
         global gameState
         gameState = 1
@@ -260,23 +257,32 @@ class GalagaGame():
     # 화면을 그리는 메소드 
     def paintMainMenu(self) :
         self.canvas.delete(ALL)
+        # 게임 화면의 배경을 검은색으로 색칠합니다.
         self.canvas.create_rectangle(0, 0, 800, 600, fill="black")
+        # 메인 화면에 사용될 폰트를 설정합니다.
+        # 폰트패밀리는 Chiller로, macOS나 Linux에서는 별도로 설치해야 합니다.
         mainBigMenuFont = Font(family="Chiller", size=85, weight="bold")
         mainSmallMenuFont = Font(family="Chiller", size=35)
-        for i in range(20):
-            x = random.randint(0,w)
-            y = random.randint(0,h)
-            # self.canvas.create_oval(x,y,x,y,width=0,fill="white")
+        # 메인화면에서 하얀색 점으로 별을 표현합니다. 주석처리를 풀면 적용됩니다.
+        # for i in range(20):
+        #     x = random.randint(0,w)
+        #     y = random.randint(0,h)
+        #     self.canvas.create_oval(x,y,x,y,width=0,fill="white")
+
+        # 메인화면에 게임 타이틀을 그립니다.
         self.canvas.create_text(400,200,text="Space Pythonist", fill="red", font=mainBigMenuFont)
         self.canvas.create_text(400,370,text="- Press ENTER -", fill="white", font=mainSmallMenuFont)
 
-    # 게임이 끝났을 때의 화면을 그립니다
+    # 게임이 끝났을 때의 화면을 그립니다.
     def paintGameOver(self) :
+        # 필요한 전역 변수를 선언합니다.
         global gameScore
         global gameRound
         global maxComboCounter
         global shootBulletCounter
         global enemyKillCounter
+
+        # try문을 사용하여 만약에 사용자가 아무것도 하지 않고 게임 오버 되었을 경우를 예외처리합니다.
         try:
             accuracy = enemyKillCounter/shootBulletCounter
             if accuracy > 1:
@@ -284,29 +290,35 @@ class GalagaGame():
             accuracy = str(round(round(accuracy,3)*100))+'%'
         except ZeroDivisionError:
             accuracy = "No Bullet Fired"
+        
+        # Game Over 화면을 위해 화면 상의 모든 것을 지웁니다.
         self.canvas.delete(ALL)
         self.canvas.create_rectangle(0, 0, 800, 600, fill="black")
-        x = random.randint(0,w)
-        y = random.randint(0,h)
-        self.canvas.create_oval(x,y,x,y,width=0,fill="white")
+        # Game Over 화면에서 사용할 폰트를 지정합니다.
         mainBigMenuFont = Font(family="Chiller", size=100, weight="bold")
         mainSmallMenuFont = Font(family="Chiller", size=25)
+        # 추가한 기능 - Game Over와 함께 게임 전적을 보여줍니다. 라운드 수, 점수, 최대 콤보, 명중률을 보여줍니다.
         self.canvas.create_text(400,200,text="Game Over", fill="red", font=mainBigMenuFont)
         self.canvas.create_text(400,300,text="Round: "+str(gameRound), fill="white", font=mainSmallMenuFont)
         self.canvas.create_text(400,343,text="Score: "+str(gameScore), fill="white", font=mainSmallMenuFont)
         self.canvas.create_text(400,386,text="Max Combo: "+str(maxComboCounter), fill="white", font=mainSmallMenuFont)
         self.canvas.create_text(400,429,text="Accuracy: "+str(accuracy), fill="white", font=mainSmallMenuFont)
 
-    # 게임이 시작되었을 때의 화면을 그립니다
+    # 게임이 시작되었을 때의 화면을 그립니다.
     def paintGame(self,g):
+        # 메인화면을 지우고 게임 화면을 그립니다.
         self.canvas.delete(ALL)
+        # 바탕을 검은색으로 칠합니다.
         self.canvas.create_rectangle(0, 0, 800, 600, fill="black")
+        # 라운드, 점수, 콤보수, 명중률을 보여주기 위한 칸을 그립니다. 
         self.canvas.create_rectangle(610,10,790,190, fill="red")
         self.canvas.create_rectangle(615,15,785,185, fill="black")
+        # 하얀색 점을 랜덤으로 찍어서 마치 우주선이 우주를 날아다니는 듯한 느낌을 주었습니다.
         for i in range(20):
             x = random.randint(0,w)
             y = random.randint(0,h)
             self.canvas.create_oval(x,y,x,y,width=0,fill="white")
+        # 추가한 기능 - 필요한 정보들을 실시간으로 업데이트합니다.
         self.updateAccuracy()
         self.updateCombo()
         self.updateScore()
@@ -340,7 +352,8 @@ class GalagaGame():
     def updateScore(self):
         global gameScore
         self.canvas.create_text(700,78,fill="white",font="Chiller 22 bold",text="Score: "+str(gameScore))
-
+    
+    # 추가한 기능 - 게임 라운드를 캔버스에 그려 표시함
     def updateRound(self):
         global gameRound
         self.canvas.create_text(700,35,fill="white",font="Chiller 22 bold",text="Round: "+str(gameRound))
@@ -372,9 +385,11 @@ class GalagaGame():
                             other.handleCollision(me)
             self.paintGame(self.canvas)
 
+        # 모든 적이 죽었는지 확인합니다. 
+        # self.sprites의 길이가 1이 되어야 하는 이유는 self.sprites 안에 플레이어의 우주선이 있기 때문입니다.
         if (self.running == True) and (len(self.sprites)==1):
             gameRound += 1 # 게임 라운드 변수에 1 더해줌 
-            gameSpeed += 5
+            gameSpeed += 10 
             self.initSprites() # 스프라이트 다시 저장 
             self.master.after(gameSpeed+(gameRound-1)*5, self.gameLoop)
         if self.running:
@@ -383,9 +398,8 @@ class GalagaGame():
             self.master.after(gameSpeed+(gameRound-1)*5, self.gameOverLoop)
 
 root = Tk()
-# 게임 프로그램의 제목과 아이콘 설정
+# 추가한 기능 - 게임 프로그램의 제목과 게임 아이콘 설정
 root.title("Space Pythonist")
-
 root.iconbitmap("res\\sp.ico")
 
 # def screenshot ():
@@ -403,12 +417,12 @@ root.config(menu=menubar)
 
 # 추가한 기능 - 윈도우창의 사이즈 창 크기 조절 불가능 resizable(상하,좌우)
 root.resizable(False, False)
-# 스크린 가로 세로 길이 받고
+# 스크린 가로 세로 길이 데이터를 저장
 ws = root.winfo_screenwidth() 
 hs = root.winfo_screenheight() 
 x = (ws/2) - (w/2)
 y = (hs/2) - (h/2)
-# Tkinter 윈도우가 생성되는 위치를 지정
+# 추가한 기능 - Tkinter 윈도우가 생성되는 위치를 고정 - 화면 한 가운데로
 root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 # 윈도우 g 생성
 g = GalagaGame(root)
