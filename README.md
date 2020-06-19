@@ -1,6 +1,6 @@
 # Space Pythonist
 
-Simple SF shooter game based on *Taito Corporation(タイトー株式会社)'s* **Space Invaders(スペースインベーダー)** format.  
+Simple SF shooter based on *Taito Corporation(タイトー株式会社)'s* **Space Invaders(スペースインベーダー)** format.  
 
 ## Game Preview
 
